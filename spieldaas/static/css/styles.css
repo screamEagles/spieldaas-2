@@ -1,0 +1,64 @@
+* {
+    margin: 0%;
+}
+
+:root {
+    --primmary-color: #17252a;
+    --secondary-colour: #89abe3ff;
+    --alternate-color: rgba(255, 255, 255, 0.94);
+}
+
+.dark-theme {
+    --primary-color: #66fcf1;
+    --secondary-colour: #0b0c10;
+    --alternate-color: rgba(0, 0, 0, 0.81);
+}
+
+body {
+    font-family: 'Kdam Thmor Pro', sans-serif;
+}
+
+h1, h3, p { color: var(--primary-color); }
+
+h1, h3, img {
+    text-align: center; margin: 0 auto; align-items: center; display: block;
+}
+
+img { width: 28.25%; }
+
+#icon{ cursor: pointer; }
+
+ul {
+    background-color: var(--secondary-colour);
+    color: var(--primary-color);
+    list-style-type: none;
+    font-size: 30px;
+    text-align: center;
+}
+
+li {
+    display: inline;
+    padding: 0px 70px 0px 70px;
+}
+
+.sections {
+    width: 70%;
+    background-color: var(--alternate-color);
+    margin: 1% auto;
+    border: 2px solid black;
+    padding: 1%;
+}
+
+table, div {
+    text-align: center; margin: 0 auto;
+    color: var(--primary-color);
+}
+
+tr:nth-child(even) {
+    background-color: #89abe3ff;
+}
+
+a:link { color: orange; }
+a:visited { color: cyan; }
+a:hover { color: limegreen; }
+a:active { color: yellow; }

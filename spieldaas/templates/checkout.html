@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spieldaas - Checkout</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+
+    <!-- For Fonts and Icons -->
+    <link rel="icon" type="image/x-icon" href="{% static 'images/spieldaas_logo.ico' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" integrity="sha512-5A8nwdMOWrSz20fDsjczgUidUBR8liPYU+WymTZP1lmY9G6Oc7HlZv156XqnsgNUzTyMefFTcsFH/tnJE/+xBg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kdam+Thmor+Pro&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            background-image: url("{% static 'images/spieldaas_white.png' %}");
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
+        }
+    </style>
+</head>
+<body>
+    <section >
+        <ul style="list-style-type: none; font-size: 30px; text-align: center;">
+            <a href="{% url 'checkout' %}" style="text-decoration: none; color:var(--primary-color)"><i class="fa fa-shopping-cart" aria-hidden="true" ></i></a>
+            <li><a href="{% url 'main' %}" style="text-decoration: none; color:var(--primary-color)">Home</a></li>
+            <li><a href="{% url 'news' %}" style="text-decoration: none; color:var(--primary-color)">News</a></li>
+            <li><a href="{% url 'store' %}" style="text-decoration: none; color:var(--primary-color)">Store</a></li>
+            <i class="fa fa-moon-o" aria-hidden="true" id="icon"></i>
+        </ul>
+    </section>
+
+    <h1>Checkout</h1>
+
+    <div class="sections">
+        <div style="margin: 0 auto;" id="paypal-button-container"></div>
+        <script src="https://www.paypal.com/sdk/js?client-id=AYgmXpPosHIwG3gy3A1bt-gICPxD_QpgLoZ39oKBx9CviMuV0_Bu0ypnPL6ZjcIrjc79JhxtpBi9J1cY&currency=USD"></script>
+
+        <script>
+            paypal.Buttons({
+              // Order is created on the server and the order id is returned
+              createOrder() {
+                return fetch("/my-server/create-paypal-order", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  // use the "body" param to optionally pass additional order information
+                  // like product skus and quantities
+                  body: JSON.stringify({
+                    cart: [
+                      {
+                        sku: "YOUR_PRODUCT_STOCK_KEEPING_UNIT",
+                        quantity: "YOUR_PRODUCT_QUANTITY",
+                      },
+                    ],
+                  }),
+                })
+                .then((response) => response.json())
+                .then((order) => order.id);
+              },
+              // Finalize the transaction on the server after payer approval
+              onApprove(data) {
+                return fetch("/my-server/capture-paypal-order", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    orderID: data.orderID
+                  })
+                })
+                .then((response) => response.json())
+                .then((orderData) => {
+                  // Successful capture! For dev/demo purposes:
+                  console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
+                  const transaction = orderData.purchase_units[0].payments.captures[0];
+                  alert(`Transaction ${transaction.status}: ${transaction.id}\n\nSee console for all available details`);
+                  // When ready to go live, remove the alert and show a success message within this page. For example:
+                  // const element = document.getElementById('paypal-button-container');
+                  // element.innerHTML = '<h3>Thank you for your payment!</h3>';
+                  // Or go to another URL:  window.location.href = 'thank_you.html';
+                });
+              }
+            }).render('#paypal-button-container');
+          </script>
+    </div>
+
+    <script>
+        // For Dark Theme
+        let icon = document.getElementById("icon");
+        icon.onclick = function() {
+            document.body.classList.toggle("dark-theme");
+            document.body.style.backgroundImage = "url('{% static 'images/spieldaas_black.png' %}')";
+            if (document.body.classList.contains("dark-theme")) {
+                icon.className = "fa fa-sun-o";
+            } else {
+                icon.className = "fa fa-moon-o";
+                document.body.style.backgroundImage = "url('{% static 'images/spieldaas_white.png' %}')";
+            }
+        }
+    </script>
+</body>
+</html>
